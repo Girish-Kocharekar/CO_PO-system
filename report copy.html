@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher - Manage Assessments</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    body { background-color: #f4f7f6; }
+    .container { max-width: 900px; }
+    .step-box { border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; background-color: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .step-complete { background-color: #d1e7dd; border-color: #badbcc; }
+    .step-active { border: 2px solid #0d6efd; }
+    .navbar { box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#"><i class="fas fa-chalkboard-teacher me-2"></i>Teacher Dashboard</a>
+  </div>
+</nav>
+
+<div class="container mt-5">
+  <h2 class="mb-4 text-primary">Manage Student CO Assessments</h2>
+
+  <!-- Step 1: Select Course -->
+  <div class="step-box step-active">
+    <h5 class="mb-3 text-dark"><i class="fas fa-book me-2"></i> Step 1: Select Course</h5>
+    <select id="courseSelect" class="form-select" onchange="showStudents()">
+      <option value="">-- Select Course --</option>
+      <option value="1">Data Structures</option>
+      <option value="2">Database Management Systems</option>
+      <option value="3">Operating Systems</option>
+    </select>
+  </div>
+
+  <!-- Step 2: Select Student -->
+  <div class="step-box" id="studentStep" style="display:none;">
+    <h5 class="mb-3"><i class="fas fa-user-graduate me-2"></i> Step 2: Select Student</h5>
+    <select id="studentSelect" class="form-select" onchange="showScores()">
+      <option value="">-- Select Student --</option>
+      <option value="1">Alice (101)</option>
+      <option value="2">Bob (102)</option>
+      <option value="3">Charlie (103)</option>
+    </select>
+  </div>
+
+  <!-- Step 3: Enter Scores -->
+  <div class="step-box" id="scoreStep" style="display:none;">
+    <h5 class="mb-3 text-success"><i class="fas fa-clipboard-list me-2"></i> Step 3: Enter Scores</h5>
+    <table class="table table-striped table-bordered align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>CO Code</th>
+          <th>Description</th>
+          <th>Score Achieved</th>
+          <th>Max Score</th>
+        </tr>
+      </thead>
+      <tbody id="coTableBody">
+        <tr>
+          <td>CO1</td>
+          <td>Understand arrays and linked lists</td>
+          <td><input type="number" class="form-control score" value="0"></td>
+          <td><input type="number" class="form-control max" value="20"></td>
+        </tr>
+        <tr>
+          <td>CO2</td>
+          <td>Apply sorting and searching algorithms</td>
+          <td><input type="number" class="form-control score" value="0"></td>
+          <td><input type="number" class="form-control max" value="20"></td>
+        </tr>
+        <tr>
+          <td>CO3</td>
+          <td>Analyze algorithm complexity</td>
+          <td><input type="number" class="form-control score" value="0"></td>
+          <td><input type="number" class="form-control max" value="20"></td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="btn btn-success w-100 mt-3" onclick="calculatePO()"><i class="fas fa-save me-2"></i> Save Assessment Data</button>
+  </div>
+
+  <!-- Step 4: PO Attainment -->
+  <div class="step-box" id="poStep" style="display:none;">
+    <h5 class="mb-3 text-primary"><i class="fas fa-bullseye me-2"></i> Step 4: PO Attainment</h5>
+    <p><strong>Percentage Achieved:</strong> <span id="poPercent">0</span>%</p>
+    <p><strong>PO Level:</strong> <span class="badge bg-success" id="poLevel">0</span></p>
+  </div>
+</div>
+
+<script>
+function showStudents() {
+  const course = document.getElementById('courseSelect').value;
+  document.getElementById('studentStep').style.display = course ? 'block' : 'none';
+  document.getElementById('scoreStep').style.display = 'none';
+  document.getElementById('poStep').style.display = 'none';
+}
+
+function showScores() {
+  const student = document.getElementById('studentSelect').value;
+  document.getElementById('scoreStep').style.display = student ? 'block' : 'none';
+  document.getElementById('poStep').style.display = 'none';
+}
+
+function calculatePO() {
+  const scores = document.querySelectorAll('.score');
+  const maxs = document.querySelectorAll('.max');
+  let totalScore = 0, totalMax = 0;
+
+  for (let i = 0; i < scores.length; i++) {
+    totalScore += parseFloat(scores[i].value) || 0;
+    totalMax += parseFloat(maxs[i].value) || 0;
+  }
+
+  const percent = totalMax > 0 ? (totalScore / totalMax) * 100 : 0;
+  let level = 0;
+  if (percent >= 80) level = 3;
+  else if (percent >= 70) level = 2;
+  else if (percent >= 60) level = 1;
+
+  document.getElementById('poPercent').textContent = percent.toFixed(2);
+  document.getElementById('poLevel').textContent = level;
+  document.getElementById('poStep').style.display = 'block';
+  alert('Assessment Data Saved Successfully!');
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

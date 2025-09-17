@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher - Manage Assessments</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body {
+            background-color: #f4f7f6;
+        }
+        .container {
+            max-width: 900px;
+        }
+        .step-box {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .step-complete {
+            background-color: #d1e7dd; /* Light green */
+            border-color: #badbcc;
+        }
+        .step-active {
+            border: 2px solid #0d6efd;
+        }
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.php"><i class="fas fa-chalkboard-teacher me-2"></i>Teacher Dashboard</a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary">Manage Student CO Assessments</h2>
+    
+    <?php echo $message; ?>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="step-box <?php echo $selected_course ? 'step-complete' : 'step-active'; ?>">
+                <h5 class="mb-3 text-dark"><i class="fas fa-book me-2"></i> Step 1: Select Course</h5>
+                <form method="GET">
+                    <select name="course_id" class="form-select" onchange="this.form.submit()">
+                        <option value="">-- Select Course --</option>
+                        <?php mysqli_data_seek($courses, 0); while($c = mysqli_fetch_assoc($courses)) { ?>
+                            <option value="<?php echo $c['id']; ?>" 
+                                <?php if($selected_course == $c['id']) echo "selected"; ?>>
+                                <?php echo htmlspecialchars($c['course_name']); ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="step-box <?php 
+                if (!$selected_course) echo 'text-muted'; 
+                else if (!$selected_student) echo 'step-active'; 
+                else echo 'step-complete'; 
+            ?>">
+                <h5 class="mb-3"><i class="fas fa-user-graduate me-2"></i> Step 2: Select Student</h5>
+                <?php if ($selected_course) { ?>
+                    <form method="GET">
+                        <input type="hidden" name="course_id" value="<?php echo htmlspecialchars($selected_course); ?>">
+                        <select name="student_id" class="form-select" onchange="this.form.submit()">
+                            <option value="">-- Select Student --</option>
+                            <?php mysqli_data_seek($students, 0); while($s = mysqli_fetch_assoc($students)) { ?>
+                                <option value="<?php echo htmlspecialchars($s['id']); ?>" 
+                                    <?php if($selected_student == $s['id']) echo "selected"; ?>>
+                                    <?php echo htmlspecialchars($s['name'] . " (" . $s['roll_no'] . ")"); ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                    </form>
+                <?php } else { ?>
+                    <p class="small">Please complete Step 1 first.</p>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+
+    <?php if ($selected_course && $selected_student) { 
+        // Get the selected student's name for display
+        mysqli_data_seek($students, 0); 
+        $current_student_name = "Student";
+        while($s = mysqli_fetch_assoc($students)) {
+            if ($s['id'] == $selected_student) {
+                $current_student_name = htmlspecialchars($s['name'] . " (" . $s['roll_no'] . ")");
+                break;
+            }
+        }
+    ?>
+        <div class="step-box step-active">
+            <h5 class="mb-3 text-success"><i class="fas fa-clipboard-list me-2"></i> Step 3: Enter Scores for <?php echo $current_student_name; ?></h5>
+            
+            <form method="POST">
+                <input type="hidden" name="course_id" value="<?php echo htmlspecialchars($selected_course); ?>">
+                <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($selected_student); ?>">
+                
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>CO Code</th>
+                                <th style="width: 40%;">Description</th>
+                                <th style="width: 15%;">Score Achieved</th>
+                                <th style="width: 15%;">Max Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php mysqli_data_seek($cos, 0); while($co = mysqli_fetch_assoc($cos)) { 
+                                // fetch existing data (using non-prepared statement for simplicity in fetch, but POST uses prepared)
+                                $check = mysqli_query($conn, "SELECT score, max_score FROM student_assessments WHERE student_id='$selected_student' AND co_id='".$co['id']."'");
+                                $existing = mysqli_fetch_assoc($check);
+                            ?>
+                            <tr>
+                                <td><span class="badge bg-info text-dark"><?php echo htmlspecialchars($co['co_code']); ?></span></td>
+                                <td><?php echo htmlspecialchars($co['description']); ?></td>
+                                <td>
+                                    <input type="number" step="0.01" name="co[<?php echo htmlspecialchars($co['id']); ?>][score]" 
+                                           class="form-control" placeholder="0" 
+                                           value="<?php echo htmlspecialchars($existing['score'] ?? ''); ?>">
+                                </td>
+                                <td>
+                                    <input type="number" step="0.01" name="co[<?php echo htmlspecialchars($co['id']); ?>][max]" 
+                                           class="form-control" placeholder="10" 
+                                           value="<?php echo htmlspecialchars($existing['max_score'] ?? ''); ?>">
+                                </td>
+                            </tr>
+                            <?php } ?>
+                        </tbody>
+                    </table>
+                </div>
+                <button type="submit" class="btn btn-success btn-lg w-100 mt-3">
+                    <i class="fas fa-save me-2"></i> Save Assessment Data
+                </button>
+            </form>
+        </div>
+    <?php } ?>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Course Report</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+        padding: 20px;
+    }
+    h2 {
+        color: #007bff;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    table {
+        width: 60%;
+        margin: 0 auto 40px auto;
+        border-collapse: collapse;
+        background-color: white;
+    }
+    table, th, td {
+        border: 1px solid #dee2e6;
+    }
+    th, td {
+        padding: 12px 15px;
+        text-align: center;
+    }
+    th {
+        background-color: #007bff;
+        color: white;
+    }
+    canvas {
+        display: block;
+        margin: 0 auto;
+    }
+</style>
+</head>
+<body>
+
+<h2>Student Course Report</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Course</th>
+            <th>Total Score</th>
+        </tr>
+    </thead>
+    <tbody id="courseTableBody">
+        <!-- Table rows populated by JS -->
+    </tbody>
+</table>
+
+<canvas id="scoreChart" width="600" height="300"></canvas>
+
+<script>
+    // Sample data simulating PHP query results
+    const courses = ["Mathematics", "Physics", "Chemistry", "Computer Science"];
+    const scores = [85, 90, 78, 92];
+
+    // Populate HTML table
+    const tbody = document.getElementById('courseTableBody');
+    courses.forEach((course, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${course}</td><td>${scores[index]}</td>`;
+        tbody.appendChild(tr);
+    });
+
+    // Create Chart.js bar chart
+    const ctx = document.getElementById('scoreChart').getContext('2d');
+    const scoreChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: courses,
+            datasets: [{
+                label: 'Total Score per Course',
+                data: scores,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { 
+                    beginAtZero: true,
+                    title: { display: true, text: 'Total Score' }
+                },
+                x: {
+                    title: { display: true, text: 'Courses' }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Student Total Scores by Course'
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

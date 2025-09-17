@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PO Attainment Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="p-4">
+
+<h2 class="mb-4">Program Outcome (PO) Attainment Report</h2>
+
+<!-- Chart Card -->
+<div class="card p-3 mb-4">
+  <canvas id="poChart"></canvas>
+</div>
+
+<!-- PO Attainment Table -->
+<table class="table table-bordered mt-4">
+  <thead class="table-dark">
+    <tr>
+      <th>PO Code</th>
+      <th>Description</th>
+      <th>Attainment (%)</th>
+      <th>PO Level</th>
+    </tr>
+  </thead>
+  <tbody id="poTableBody">
+    <!-- Table rows will be inserted by JS -->
+  </tbody>
+</table>
+
+<script>
+  // Sample PO Data (replace with dynamic data if needed)
+  const pos = [
+    { po_code: "PO1", description: "Engineering Knowledge", attainment: 85 },
+    { po_code: "PO2", description: "Problem Analysis", attainment: 72 },
+    { po_code: "PO3", description: "Design/Development of Solutions", attainment: 65 },
+    { po_code: "PO4", description: "Conduct Investigations", attainment: 55 },
+    { po_code: "PO5", description: "Modern Tool Usage", attainment: 78 }
+  ];
+
+  // Prepare Chart Data
+  const poCodes = pos.map(po => po.po_code);
+  const poValues = pos.map(po => po.attainment);
+
+  // Render Chart
+  const ctx = document.getElementById('poChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: poCodes,
+      datasets: [{
+        label: 'PO Attainment (%)',
+        data: poValues,
+        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100
+        }
+      }
+    }
+  });
+
+  // Render Table
+  const tableBody = document.getElementById('poTableBody');
+  pos.forEach(po => {
+    let level = 0, badge = '';
+    if (po.attainment >= 80) { level = 3; badge = 'success'; }
+    else if (po.attainment >= 70) { level = 2; badge = 'warning'; }
+    else if (po.attainment >= 60) { level = 1; badge = 'warning'; }
+    else { level = 0; badge = 'danger'; }
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${po.po_code}</td>
+      <td>${po.description}</td>
+      <td>${po.attainment}%</td>
+      <td><span class="badge bg-${badge}">Level ${level}</span></td>
+    `;
+    tableBody.appendChild(row);
+  });
+</script>
+
+</body>
+</html>

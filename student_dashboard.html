@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Performance Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    body { background-color: #f8f9fa; }
+    .header-section { background-color: #007bff; color: white; padding: 20px 0; margin-bottom: 20px; text-align: center; }
+    .card { box-shadow: 0 4px 8px rgba(0,0,0,0.05); border-radius: 10px; margin-bottom: 20px; border: none; }
+    .chart-container { position: relative; height: 300px; width: 300px; margin: auto; }
+    .table-striped > tbody > tr:nth-of-type(odd) > * { background-color: rgba(0, 123, 255, 0.05); }
+</style>
+</head>
+<body>
+
+<header class="header-section">
+    <h1 class="display-5">Student Performance Dashboard</h1>
+</header>
+
+<div class="container">
+
+    <div class="card p-4 mb-4">
+        <h2 class="card-title text-primary" id="studentName">Welcome, John Doe</h2>
+        <p class="card-text lead">Roll No: <strong id="studentRoll">12345</strong></p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card p-4 h-100">
+                <h3 class="card-title">Overall Performance</h3>
+                <table class="table table-bordered text-center my-3">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Total Score</th>
+                            <th>Max Score</th>
+                            <th>Overall %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="overallScore">260</td>
+                            <td id="overallMax">300</td>
+                            <td><strong id="overallPercent">86.67%</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="chart-container mt-4">
+                    <canvas id="overallChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card p-4 h-100">
+                <h3 class="card-title mb-3">Course-wise Performance</h3>
+                <canvas id="courseChart" style="max-height: 350px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4 p-4 h-100">
+        <div class="mb-4">
+            <label for="course_select" class="form-label me-3 mb-0 fw-bold">Select Course:</label>
+            <select id="course_select" class="form-select w-auto" onchange="showCOAssessments()">
+                <option value="">-- View Course Outcomes --</option>
+            </select>
+        </div>
+
+        <div id="coTableContainer" class="table-responsive mt-3"></div>
+    </div>
+</div>
+
+<script>
+    // Sample Student Data
+    const student = { name: "John Doe", roll_no: "12345" };
+    document.getElementById('studentName').innerText = "Welcome, " + student.name;
+    document.getElementById('studentRoll').innerText = student.roll_no;
+
+    // Overall Scores
+    const overallScore = 260;
+    const overallMax = 300;
+    const overallPercent = ((overallScore / overallMax) * 100).toFixed(2);
+    document.getElementById('overallScore').innerText = overallScore;
+    document.getElementById('overallMax').innerText = overallMax;
+    document.getElementById('overallPercent').innerText = overallPercent + "%";
+
+    // Overall Pie Chart
+    const overallData = {
+        labels: ['Scored', 'Remaining'],
+        datasets: [{
+            data: [overallScore, overallMax - overallScore],
+            backgroundColor: ['#28a745', '#dc3545'],
+            hoverOffset: 4
+        }]
+    };
+    new Chart(document.getElementById('overallChart'), {
+        type: 'doughnut',
+        data: overallData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Overall Attainment Distribution' } }
+        }
+    });
+
+    // Course-wise Performance Data
+    const courses = [
+        { id: 1, name: "Mathematics", score: 80, max: 100 },
+        { id: 2, name: "Physics", score: 90, max: 100 },
+        { id: 3, name: "Chemistry", score: 90, max: 100 }
+    ];
+
+    const courseNames = courses.map(c => c.name);
+    const coursePercents = courses.map(c => ((c.score / c.max) * 100).toFixed(2));
+
+    new Chart(document.getElementById('courseChart'), {
+        type: 'bar',
+        data: {
+            labels: courseNames,
+            datasets: [{
+                label: 'Performance (%)',
+                data: coursePercents,
+                backgroundColor: '#007bff',
+                borderColor: '#007bff',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, max: 100, title: { display: true, text: 'Percentage (%)' } },
+                x: { title: { display: true, text: 'Courses' } }
+            },
+            plugins: { legend: { display: false }, title: { display: true, text: 'Course-wise Performance Percentages' } }
+        }
+    });
+
+    // Populate course dropdown
+    const courseSelect = document.getElementById('course_select');
+    courses.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.text = c.name;
+        courseSelect.appendChild(opt);
+    });
+
+    // Sample CO Data
+    const courseAssessments = {
+        1: [
+            { co_code: "CO1", description: "Algebra", score: 25, max: 30 },
+            { co_code: "CO2", description: "Calculus", score: 30, max: 35 },
+            { co_code: "CO3", description: "Geometry", score: 25, max: 35 }
+        ],
+        2: [
+            { co_code: "CO1", description: "Mechanics", score: 40, max: 50 },
+            { co_code: "CO2", description: "Optics", score: 50, max: 50 }
+        ],
+        3: [
+            { co_code: "CO1", description: "Organic Chemistry", score: 40, max: 50 },
+            { co_code: "CO2", description: "Inorganic Chemistry", score: 50, max: 50 }
+        ]
+    };
+
+    function showCOAssessments() {
+        const selectedId = courseSelect.value;
+        const container = document.getElementById('coTableContainer');
+        container.innerHTML = "";
+
+        if (!selectedId || !courseAssessments[selectedId]) return;
+
+        const table = document.createElement('table');
+        table.className = "table table-striped table-hover mt-3";
+        table.innerHTML = `
+            <thead class="table-dark">
+                <tr>
+                    <th>CO Code</th>
+                    <th>Description</th>
+                    <th>Score</th>
+                    <th>Max Score</th>
+                    <th>Attainment %</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${courseAssessments[selectedId].map(co => {
+                    const attainment = ((co.score / co.max) * 100).toFixed(2);
+                    let cls = attainment >= 70 ? 'text-success fw-bold' : (attainment >= 50 ? 'text-warning' : 'text-danger');
+                    return `<tr>
+                        <td>${co.co_code}</td>
+                        <td>${co.description}</td>
+                        <td>${co.score}</td>
+                        <td>${co.max}</td>
+                        <td class="${cls}">${attainment}%</td>
+                    </tr>`;
+                }).join('')}
+            </tbody>
+        `;
+        container.appendChild(table);
+    }
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

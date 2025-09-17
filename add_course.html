@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Course & COs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
+  <style>
+    body {
+      background-color: #f4f7f6; /* Soft background */
+      min-height: 100vh;
+    }
+    .navbar {
+      background-color: #007bff !important; /* Primary Blue Navbar */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .card {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-radius: 10px;
+    }
+    .co-input-row {
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        background-color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"><i class="fas fa-project-diagram me-2"></i>CO–PO System</a>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="add_course.html"><i class="fas fa-book me-1"></i>Courses</a></li>
+          <li class="nav-item"><a class="nav-link" href="map_copo.html"><i class="fas fa-map-marked-alt me-1"></i>CO–PO Mapping</a></li>
+          <li class="nav-item"><a class="nav-link" href="report.html"><i class="fas fa-chart-bar me-1"></i>Reports</a></li>
+          <li class="nav-item"><a class="nav-link" href="teacher_assessments.html"><i class="fas fa-chalkboard-teacher me-1"></i>Manage Assessments</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<div class="container mt-5">
+    
+    <!-- Message Placeholder -->
+    <div id="message"></div>
+
+    <div class="row">
+        
+        <!-- Add Course Form -->
+        <div class="col-lg-7 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0"><i class="fas fa-plus-circle me-2"></i> Add New Course & COs</h3>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-4">
+                            <label for="course_name" class="form-label fw-bold">Course Name</label>
+                            <input type="text" name="course_name" id="course_name" class="form-control" placeholder="e.g., Data Structures and Algorithms" required>
+                        </div>
+
+                        <h5 class="mb-3 text-secondary"><i class="fas fa-list-alt me-1"></i> Course Outcomes (COs)</h5>
+                        
+                        <div id="coContainer">
+                            <div class="row co-input-row align-items-center">
+                                <div class="col-4">
+                                    <label class="form-label small fw-bold">CO Code</label>
+                                    <input type="text" name="co_code[]" class="form-control" placeholder="CO1" required>
+                                </div>
+                                <div class="col-8">
+                                    <label class="form-label small fw-bold">Description</label>
+                                    <input type="text" name="description[]" class="form-control" placeholder="Describe the outcome" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-secondary btn-sm me-2" onclick="addRow()">
+                            <i class="fas fa-plus me-1"></i> Add Another CO
+                        </button>
+                        <button type="submit" class="btn btn-primary float-end">
+                            <i class="fas fa-save me-1"></i> Save Course & COs
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Existing Courses (Static Example) -->
+        <div class="col-lg-5 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="card-title mb-0"><i class="fas fa-search me-2"></i> Existing Courses (3)</h4>
+                </div>
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Data Structures and Algorithms
+                            <span class="badge bg-primary rounded-pill">ID: 1</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Database Management Systems
+                            <span class="badge bg-primary rounded-pill">ID: 2</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Operating Systems
+                            <span class="badge bg-primary rounded-pill">ID: 3</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addRow() {
+      const container = document.getElementById("coContainer");
+      const numRows = container.children.length;
+      
+      const newRow = document.createElement('div');
+      newRow.className = 'row co-input-row align-items-center';
+      
+      newRow.innerHTML = `
+        <div class="col-4">
+            <input type="text" name="co_code[]" class="form-control" placeholder="CO${numRows + 1}" required>
+        </div>
+        <div class="col-7">
+            <input type="text" name="description[]" class="form-control" placeholder="Outcome Description" required>
+        </div>
+        <div class="col-1 text-end">
+            <button type="button" class="btn btn-sm btn-danger p-0 border-0" onclick="removeRow(this)">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>
+      `;
+      container.appendChild(newRow);
+    }
+    
+    function removeRow(button) {
+        button.closest('.co-input-row').remove();
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

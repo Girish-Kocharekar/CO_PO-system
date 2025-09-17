@@ -1,0 +1,121 @@
+<?php
+// index.php - Minimal Landing Page for Hackathon Demo (Improved Design)
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CO–PO Management System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
+  <style>
+    /* Global Styling */
+    body {
+      background: linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%); /* Soft Gradient Background */
+      min-height: 100vh;
+      display: flex; /* Enable flexbox for vertical centering */
+      flex-direction: column;
+    }
+    
+    /* Navbar Styling */
+    .navbar {
+      background-color: #007bff !important; /* Primary Blue Navbar */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand {
+      font-weight: 700;
+    }
+    .nav-link {
+      color: rgba(255, 255, 255, 0.8) !important;
+      transition: color 0.3s;
+    }
+    .nav-link:hover {
+      color: white !important;
+    }
+
+    /* Hero Section Styling */
+    .hero-container {
+      flex-grow: 1; /* Allows the container to push content to the middle */
+      display: flex;
+      align-items: center; /* Vertically center content */
+      padding: 20px;
+    }
+    .hero {
+      text-align: center;
+      width: 100%;
+      max-width: 800px;
+      margin: auto;
+    }
+    .hero h1 {
+      font-size: 3.5rem; /* Larger, bolder heading */
+      font-weight: 800;
+      color: #343a40; /* Darker text for contrast */
+      margin-bottom: 15px;
+    }
+    .hero p {
+      font-size: 1.4rem;
+      color: #6c757d;
+      margin-bottom: 30px;
+    }
+    
+    /* Call-to-Action Button */
+    .btn-custom {
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 50px; /* Pill shape */
+      background-color: #28a745; /* Success/Green color for action */
+      border-color: #28a745;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 10px rgba(40, 167, 69, 0.3); /* Subtle shadow */
+    }
+    .btn-custom:hover {
+      background-color: #1e7e34;
+      border-color: #1e7e34;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="index.php"><i class="fas fa-project-diagram me-2"></i>CO–PO System</a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="add_course.html"><i class="fas fa-book me-1"></i>Courses</a></li>
+          <li class="nav-item"><a class="nav-link" href="map_copo.html"><i class="fas fa-map-marked-alt me-1"></i>CO–PO Mapping</a></li>
+          <li class="nav-item"><a class="nav-link" href="report.html"><i class="fas fa-chart-bar me-1"></i>Reports</a></li>
+          <li class="nav-item"><a class="nav-link" href="report copy.html"><i class="fas fa-chart-bar me-1"></i>PO Gread</a></li>
+          <li class="nav-item"><a class="nav-link" href="teacher_assessments.html"><i class="fas fa-chalkboard-teacher me-1"></i>Manage Assessments</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container hero-container">
+    <div class="hero">
+      <h1>Automate PO Attainment. Simplify CO–PO Management.</h1>
+      <p>The comprehensive solution for educational institutions to track Course Outcomes and map them efficiently to Program Outcomes.</p>
+      
+      <a href="add_course.html" class="btn btn-custom btn-lg">
+        <i class="fas fa-plus-circle me-2"></i> Start Adding Courses Now
+      </a>
+      
+      <div class="mt-4">
+        <a href="student_login.html" class="text-secondary small">Are you a student? Login here</a>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
